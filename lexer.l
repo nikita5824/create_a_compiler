@@ -20,6 +20,11 @@ HEX 0x[0-9A-F]+
 FLOAT {DIGIT}*\.{DIGIT}+|{DIGIT}+\.|{DIGIT}+e-?{DIGIT}+
 LOG_OP and|or|not|<|>|==|<=|>=|!=
 
+SEPARATOR (|)|[|]|,|:|{|}
+ASSIGNMENT =|+=|-=|*=|/=|%=
+ONELINECOMMENTS #
+MULTILINECOMMENTS \'{3}|\"{3}
+
 %%
 {DIGIT}+|int\({DIGIT}\)|int\({BIN}\)|int\({OCT}\)|int\({HEX}\)|int\({FLOAT}\) {
     TLex* lex = new TLex; 
@@ -51,23 +56,30 @@ LOG_OP and|or|not|<|>|==|<=|>=|!=
     return lex;
 }
 
-True|False|class|finally|is|return|None|continue|for|lambda|try|def|from|nonlocal|while|and|del|global|not|with|as|elif|if|or|yield|assert|else|import|pass|break|except|in|raise {
-    TLex* lex = new TLex; 
-    lex->_name = "key_word"; 
-    return lex;
-}
-
 \+|\-|\*|\/|\/\/|\%|\*\* {
     TLex* lex = new TLex; 
     lex->_name = "arithmetic operation"; 
     return lex;
 }
 
-LOG_OP {
+{LOG_OP} {
     TLex* lex = new TLex; 
     lex->_name = "logical operation"; 
     return lex;
 }
+
+{ONELINECOMMENTS}+[a-zA-Z0-9_\- ]+[^{ONELINECOMMENTS}]\n {
+    TLex* lex = new TLex; 
+    lex->_name = "oneline comment"; 
+    return lex;
+}
+
+{MULTILINECOMMENTS}+[a-zA-Z0-9_\- \'\"]+{MULTILINECOMMENTS}?\n {
+    TLex* lex = new TLex; 
+    lex->_name = "multiline comment"; 
+    return lex;
+}
+
 
 %%
 int main() {
