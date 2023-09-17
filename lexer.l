@@ -18,7 +18,7 @@ BIN 0b[01]+
 OCT 0o[0-7]+
 HEX 0x[0-9A-F]+
 FLOAT {DIGIT}*\.{DIGIT}+|{DIGIT}+\.|{DIGIT}+e-?{DIGIT}+
-
+LOG_OP and|or|not|<|>|==|<=|>=|!=
 
 %%
 {DIGIT}+|int\({DIGIT}\)|int\({BIN}\)|int\({OCT}\)|int\({HEX}\)|int\({FLOAT}\) {TLex* lex = new TLex; lex->_name = "int decimal"; return lex;}
@@ -35,6 +35,7 @@ True|False|class|finally|is|return|None|continue|for|lambda|try|def|from|nonloca
 
 \+|\-|\*|\/|\/\/|\%|\*\* {TLex* lex = new TLex; lex->_name = "arithmetic operation"; return lex;}
 
+LOG_OP {TLex* lex = new TLex; lex->_name = "logical operation"; return lex;}
 %%
 int main() {
     TLex* yyin = 0;
