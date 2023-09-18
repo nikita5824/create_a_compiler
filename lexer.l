@@ -18,8 +18,8 @@ BIN 0b[01]+
 OCT 0o[0-7]+
 HEX 0x[0-9A-F]+
 FLOAT {DIGIT}*\.{DIGIT}+|{DIGIT}+\.|{DIGIT}+e-?{DIGIT}+
-LOG_OP \s*and\s*|\s*or\s*|\s*not\s*|<|>|==|<=|>=|!=
-
+LOG_OP <|>|==|<=|>=|!=
+KEY_WORD True|False|class|finally|is|return|None|continue|for|lambda|try|def|from|nonlocal|while|and|del|global|not|with|as|elif|if|or|yield|assert|else|import|pass|break|except|in|raise
 SEPARATOR (|)|[|]|,|:|{|}
 ASSIGNMENT =|+=|-=|*=|/=|%=
 ONELINECOMMENTS #
@@ -82,19 +82,31 @@ MULTILINECOMMENTS \'{3}|\"{3}
 
 \s*(\+=|\-=|\*=|\/=|%=|=)\s* {
     TLex* lex = new TLex; 
-    lex->_name = "control structure"; 
+    lex->_name = "assignment"; 
     return lex;
 }
 
-\s*(\+=|\-=|\*=|\/=|%=|=)\s* {
-    TLex* lex = new TLex; 
-    lex->_name = "control structure"; 
-    return lex;
-}
-
-\s*(\+=|\-=|\*=|\/=|%=|=)\s* {
+\s*(\(|\)|\[|\]|\:|\{|\})\s* {
     TLex* lex = new TLex; 
     lex->_name = "separator"; 
+    return lex;
+}
+
+(for|while|do) {
+    TLex* lex = new TLex; 
+    lex->_name = "cycle"; 
+    return lex;
+}
+
+{KEY_WORD} {
+    TLex* lex = new TLex; 
+    lex->_name = "key word"; 
+    return lex;
+}
+
+[a-zA-Z_][a-zA-Z0-9_]*\s* {
+    TLex* lex = new TLex; 
+    lex->_name = "identifier"; 
     return lex;
 }
 
